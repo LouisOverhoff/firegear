@@ -1,0 +1,94 @@
+:root {
+  --primary: #e63946;
+  --primary-dark: #cc313b;
+  --secondary: #457b9d;
+  --background: #0f172a;
+  --surface: #1e293b;
+  --surface-lighter: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent: #fbbf24;
+  --success: #10b981;
+  --radius: 12px;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --glass: rgba(30, 41, 59, 0.7);
+  --border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* Red glow for fire department feel */
+.fire-glow {
+  box-shadow: 0 0 20px rgba(230, 57, 70, 0.2);
+}
+
+input, select, textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.2);
+}
+
+button {
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+option {
+  background: #1e293b;
+  color: white;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--surface-lighter);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+}
+
+.card {
+  padding: 1.5rem;
+  border-radius: var(--radius);
+}

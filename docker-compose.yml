@@ -1,0 +1,7 @@
+services:
+  firegear:
+    build: .
+    container_name: fire-gear-inventory
+    ports:
+      - "8444:5173"
+    restart: unless-stopped
