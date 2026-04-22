@@ -1,6 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { buildInspectionHistoryNote, createAnnualInspection, normalizeItem } from '../data/inspectionProfiles';
+import {
+  buildInspectionHistoryNote,
+  createAnnualInspection,
+  normalizeItem,
+} from '../data/inspectionProfiles';
 
 const ClothingContext = createContext();
 
@@ -11,7 +15,7 @@ const MOCK_DATA = [
     status: 'Gut',
     last_inspection: '2025-01-15',
     next_inspection: '2026-01-15',
-    remarks: 'Keine Mängel',
+    remarks: 'Keine M\u00e4ngel',
     type: 'Jacke',
     archived: false,
     annualInspection: createAnnualInspection(
@@ -20,7 +24,7 @@ const MOCK_DATA = [
         inspectionDate: '2025-01-15',
         inspector: 'Werkstatt Nord',
         signature: 'MM',
-        notes: 'Keine Mängel',
+        notes: 'Keine M\u00e4ngel',
         answers: {
           labelReadable: 'ok',
           careLabelReadable: 'ok',
@@ -57,7 +61,7 @@ const MOCK_DATA = [
         id: '123456789',
         type: 'Jacke',
         status: 'Gut',
-        remarks: 'Keine Mängel',
+        remarks: 'Keine M\u00e4ngel',
         last_inspection: '2025-01-15',
       }
     ),
@@ -65,7 +69,7 @@ const MOCK_DATA = [
       {
         timestamp: '2025-01-15T12:00:00Z',
         status: 'Gut',
-        remarks: 'Erstinbetriebnahme nach Prüfung',
+        remarks: 'Erstinbetriebnahme nach Pr\u00fcfung',
       },
     ],
   },
@@ -75,7 +79,7 @@ const MOCK_DATA = [
     status: 'Bedarf Reinigung',
     last_inspection: '2024-11-20',
     next_inspection: '2025-11-20',
-    remarks: 'Rußverschmutzung vom letzten Kellerbrand',
+    remarks: 'Ru\u00dfverschmutzung vom letzten Kellerbrand',
     type: 'Hose',
     archived: false,
     history: [
@@ -93,7 +97,7 @@ const MOCK_DATA = [
   },
   {
     id: '456789123',
-    owner: 'Thomas Müller',
+    owner: 'Thomas M\u00fcller',
     status: 'Zur Pruefung faellig',
     last_inspection: '2023-03-20',
     next_inspection: '2026-03-20',
@@ -104,7 +108,7 @@ const MOCK_DATA = [
       {
         timestamp: '2023-03-20T10:00:00Z',
         status: 'Gut',
-        remarks: 'Prüfung bestanden',
+        remarks: 'Pr\u00fcfung bestanden',
       },
     ],
   },
@@ -144,15 +148,24 @@ export const ClothingProvider = ({ children }) => {
           return item;
         }
 
-        const { historyNote, ...persistedUpdates } = updates;
-        const mergedItem = normalizeItem({ ...item, ...persistedUpdates });
+        const { historyNote, inspectionRecord, ...persistedUpdates } = updates;
+        const nextInspectionRecords = inspectionRecord
+          ? [inspectionRecord, ...(item.inspectionRecords || [])]
+          : persistedUpdates.inspectionRecords || item.inspectionRecords || [];
+        const mergedItem = normalizeItem({
+          ...item,
+          ...persistedUpdates,
+          inspectionRecords: nextInspectionRecords,
+        });
         const inspectionChanged =
           JSON.stringify(mergedItem.annualInspection) !== JSON.stringify(item.annualInspection);
         const hasStatusChanged = mergedItem.status !== item.status;
         const hasInspectionDateChanged =
           mergedItem.last_inspection !== item.last_inspection ||
           mergedItem.next_inspection !== item.next_inspection;
-        const shouldLogHistory = hasStatusChanged || inspectionChanged || hasInspectionDateChanged;
+        const hasNewInspectionRecord = Boolean(inspectionRecord);
+        const shouldLogHistory =
+          hasStatusChanged || inspectionChanged || hasInspectionDateChanged || hasNewInspectionRecord;
 
         const newHistory = shouldLogHistory
           ? [
@@ -161,7 +174,9 @@ export const ClothingProvider = ({ children }) => {
                 status: mergedItem.status,
                 remarks:
                   historyNote ||
-                  buildInspectionHistoryNote(mergedItem.type, mergedItem.annualInspection),
+                  (hasNewInspectionRecord
+                    ? `Pr\u00fcfung archiviert: ${inspectionRecord.recordId}`
+                    : buildInspectionHistoryNote(mergedItem.type, mergedItem.annualInspection)),
               },
               ...(item.history || []),
             ]
